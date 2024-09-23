@@ -1,5 +1,11 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
-import 'package:guppe_shappe/home.dart';
+
+
+import 'screens/auth/login_screen.dart';
+import 'utils/app_colors.dart';
+import 'utils/app_strings.dart';
 
 class GuppeShappe extends StatelessWidget {
   const GuppeShappe({super.key});
@@ -8,13 +14,20 @@ class GuppeShappe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Chatting Application',
+      debugShowCheckedModeBanner: false,
+      title: AppStrings.myAppName,
       theme: ThemeData(
-      
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        appBarTheme: AppBarTheme(
+          centerTitle: true,
+          elevation: 1,
+          titleTextStyle: TextStyle(
+              color: AppColors.appBlackColor,
+              fontWeight: FontWeight.normal,
+              fontSize: 20),
+          backgroundColor: AppColors.appWhiteColor,
+        ),
       ),
-      home: const Home(),
+      home: const LoginScreen(),
     );
   }
 }
