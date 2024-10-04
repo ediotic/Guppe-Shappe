@@ -2,11 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../../api/api.dart';
 import '../../main.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_images.dart';
 import '../../utils/app_strings.dart';
-import '../home_screen.dart';
+import '../auth/login_screen.dart';
+import '../home/home_screen.dart';
 
 class SpalshScreen extends StatefulWidget {
   const SpalshScreen({super.key});
@@ -20,11 +23,20 @@ class _SpalshScreenState extends State<SpalshScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration(milliseconds: 2000), () {
-
-      ///exit full screen 
+      ///exit full screen
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+      SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+
+      /// user already login h
+      if (APIs.auth.currentUser != null) {
+        debugPrint("\n user ::: ${APIs.auth.currentUser}");
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => HomeScreen()));
+      } else {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => LoginScreen()));
+      }
     });
   }
 
@@ -34,7 +46,6 @@ class _SpalshScreenState extends State<SpalshScreen> {
     mq = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColors.appBlackColor,
-
       body: Stack(
         children: [
           /// icon logo
@@ -53,7 +64,7 @@ class _SpalshScreenState extends State<SpalshScreen> {
               textAlign: TextAlign.center,
               AppStrings.madeIn,
               style: TextStyle(
-                 letterSpacing: .5,
+                  letterSpacing: .5,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: AppColors.appWhiteColor),

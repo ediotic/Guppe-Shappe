@@ -19,6 +19,32 @@ dependencies:
   #fire base initialise
   firebase_core: ^3.5.0
 
+  #for handling firebase auth
+  firebase_auth: ^5.3.0
+  
+  # for google sign in
+  google_sign_in: ^6.2.1
+
+  #clod flirebase data base
+  cloud_firestore: ^5.4.2
+
+  # image showing 
+  cached_network_image: ^3.4.1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   # laucher icon
   # flutter_launcher_icons: ^0.14.0
 

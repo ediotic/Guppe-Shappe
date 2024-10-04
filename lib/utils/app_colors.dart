@@ -9,6 +9,12 @@ abstract class AppColors {
   static const Color greyMedium = Color(0xFF9E9E9E);
   static const Color greyDark = Color(0xFF616161);
 
+  // Shades of green
+  static const Color greenLight = Color(0xFF90EE90);
+  static const Color greenPale = Color(0xFF98FB98);
+  static const Color greenLightSea = Color(0xFF20B2AA);
+  static const Color greenSpring = Color(0xFF00FA9A);
+
   // Primary colors
   static const Color primaryColor = Color(0xFF6200EE);
   static const Color primaryLightColor = Color(0xFFBB86FC);
@@ -48,4 +54,7 @@ abstract class AppColors {
   static const Color green = Color(0xFF4CAF50);
   static const Color red = Color(0xFFF44336);
   static const Color yellow = Color(0xFFFFEB3B);
+  static const Color transparent = Colors.transparent;
+  static const Color skyBlue = Color(0xFF87CEEB);
+ 
 }
