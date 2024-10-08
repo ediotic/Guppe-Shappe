@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unused_field
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<ChatUser> list = [];
+  /// for storing all users
+  List<ChatUser> _list = [];
+
+  /// for storing all searched items
+  final List<ChatUser> _searchList = [];
+
+  /// for storing serach status
+  bool _isSearching = false;
+
+  @override
+  void initState() {
+    super.initState();
+    APIs.getSelfInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +42,54 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         elevation: 0,
         iconTheme: IconThemeData(color: AppColors.appBlackColor),
-        title: Text(
-          AppStrings.myAppName,
-          style: TextStyle(color: AppColors.textPrimaryColor),
-        ),
+        title: _isSearching
+            ? TextField(
+              autofocus: true,
+              style: TextStyle(fontSize: 16 , letterSpacing: .5),
+
+              /// when search text changes then updated search list.
+              onChanged: (val){
+                /// search logic
+                _searchList.clear();
+
+                for(var i in _list){
+                  if(i.name.toLowerCase().contains(val.toLowerCase()) || i.email.toLowerCase().contains(val.toLowerCase())){
+                    _searchList.add(i);
+                  }
+                  setState(() {
+                    _searchList;
+                  });
+                }
+              },
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "Name , email ....",
+                  
+                ),
+              )
+            : Text(
+                AppStrings.myAppName,
+                style: TextStyle(color: AppColors.textPrimaryColor),
+              ),
         leading: Icon(CupertinoIcons.home),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(CupertinoIcons.search)),
           IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileScreen(user: list[0],)));
-              }, icon: Icon(CupertinoIcons.ellipsis_vertical)),
+                setState(() {
+                  _isSearching = !_isSearching;
+                });
+              },
+              icon: Icon(_isSearching
+                  ? CupertinoIcons.clear_circled_solid
+                  : CupertinoIcons.search)),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => ProfileScreen(user: APIs.me)));
+              },
+              icon: Icon(CupertinoIcons.ellipsis_vertical)),
         ],
       ),
 
@@ -61,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       body: StreamBuilder(
-        stream: APIs.firestore.collection('users').snapshots(),
+        stream: APIs.getAllUsers(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             /// if data is loading
@@ -73,16 +123,16 @@ class _HomeScreenState extends State<HomeScreen> {
             case ConnectionState.active:
             case ConnectionState.done:
               final data = snapshot.data?.docs;
-              list =
+              _list =
                   data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
 
-              if (list.isNotEmpty) {
+              if (_list.isNotEmpty) {
                 return ListView.builder(
                     physics: BouncingScrollPhysics(),
-                    itemCount: list.length,
+                    itemCount: _isSearching ? _searchList.length : _list.length,
                     itemBuilder: (context, index) {
                       return ChatUserCard(
-                        user: list[index],
+                        user: _isSearching ? _searchList[index] : _list[index],
                       );
                       // return Text("Name: ${list[index]}");
                     });
