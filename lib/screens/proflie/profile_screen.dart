@@ -1,7 +1,12 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, unused_field
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, unused_field, unused_element, prefer_const_literals_to_create_immutables
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:guppe_shappe/utils/app_images.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../api/api.dart';
 import '../../helper/dialogs.dart';
@@ -22,13 +27,15 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  String? _image;
+
   @override
   Widget build(BuildContext context) {
     debugPrint('Image URL: ${widget.user.image}');
     debugPrint('Image URLlllslslslsllslslslslslslslsllsls:');
 
     return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
+      onTap: () => FocusScope.of(context).unfocus,
       child: Scaffold(
           backgroundColor: AppColors.appWhiteColor,
 
@@ -89,21 +96,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: mq.height * .03,
                     ),
 
-                    // ClipRRect(
-                    //   borderRadius: BorderRadius.circular(mq.height * .3),
-                    //   child: CachedNetworkImage(
-                    //     width: mq.width * 0.120,
-                    //     height: mq.height * 0.150,
-                    //          imageUrl: widget.user.image.isNotEmpty ? widget.user.image : ' https://lh3.googleusercontent.com/a/ACg8ocIADK0VfY7f9ngbAyKHFfKqi-4VPWRP6LLjnPGiT15WjyBUqa2qAQ=s96-c',
-
-                    //           errorWidget: (context, url, error) =>  CircleAvatar(
-                    //     child: Icon(CupertinoIcons.person),
-                    //   ),
-                    //        ),
-                    // ),
-
                     Stack(
                       children: [
+                        /// profile picture
+                        // _image != null ?
+
+                        //           ClipRRect(
+                        //             borderRadius: BorderRadius.circular(mq.height * .3),
+                        //             child: Image.file(
+                        //               File(_image!),
+                        //               width: mq.width * 0.120,
+                        //               height: mq.height * 0.150,
+                        //               fit: BoxFit.cover,
+                        //             ),
+                        //                  )
+
+                        //            :
+                        //           // server image
+                        //           ClipRRect(
+                        //             borderRadius: BorderRadius.circular(mq.height * .3),
+                        //             child: CachedNetworkImage(
+                        //               width: mq.width * 0.120,
+                        //               height: mq.height * 0.150,
+                        //                 fit: BoxFit.cover,
+                        //                    imageUrl: widget.user.image.isNotEmpty ? widget.user.image : ' https://lh3.googleusercontent.com/a/ACg8ocIADK0VfY7f9ngbAyKHFfKqi-4VPWRP6LLjnPGiT15WjyBUqa2qAQ=s96-c',
+
+                        //                     errorWidget: (context, url, error) =>  CircleAvatar(
+                        //               child: Icon(CupertinoIcons.person),
+                        //             ),
+                        //                  ),
+                        //           ) ,
+
                         /// profile picture
                         CircleAvatar(
                           radius: mq.width * .18,
@@ -118,7 +141,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             elevation: 1,
                             shape: CircleBorder(),
                             color: AppColors.appWhiteColor,
-                            onPressed: () {},
+                            onPressed: () {
+                              _showBottomSheet();
+                            },
                             child: Icon(
                               Icons.edit,
                               color: AppColors.primaryLightColor,
@@ -190,10 +215,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         minimumSize: Size(mq.width * .5, mq.height * .06),
                       ),
                       onPressed: () {
-                        if(_formKey.currentState!.validate()){
+                        if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          APIs.updatingUserInfo().then((value){
-                            Dialogs.showSnackBar(context, "Profile updated successfully");
+                          APIs.updatingUserInfo().then((value) {
+                            Dialogs.showSnackBar(
+                                context, "Profile updated successfully");
                           });
                         }
                       },
@@ -213,5 +239,97 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           )),
     );
+  }
+
+  /// bottom sheet for choosing the profile pictures
+  void _showBottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+        ),
+        builder: (_) {
+          return ListView(
+            shrinkWrap: true,
+            padding:
+                EdgeInsets.only(top: mq.height * .04, bottom: mq.height * .05),
+            children: [
+              Text(
+                AppStrings.chooseProfilePicture,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimaryColor),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: mq.height * 0.02,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: CircleBorder(),
+                      backgroundColor: AppColors.appWhiteColor,
+                      fixedSize: Size(mq.width * 0.3, mq.height * .15),
+                    ),
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+
+                      /// Pick an image.
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery , imageQuality: 80);
+                      if (image != null) {
+                        debugPrint(
+                            " image path: ${image.path} ----- MineType: ${image.mimeType}");
+                        setState(() {
+                          _image = image.path;
+                        });
+
+                        APIs.updateProfilePicture(File(_image!));
+
+                        /// for hiding bottom sheet
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Image.asset(AppImages.gallery),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: CircleBorder(),
+                      backgroundColor: AppColors.appWhiteColor,
+                      fixedSize: Size(mq.width * 0.3, mq.height * .15),
+                    ),
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+
+                      /// Pick an image.
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.camera , imageQuality: 80);
+                      if (image != null) {
+                        debugPrint(" image path: ${image.path}");
+                        setState(() {
+                          _image = image.path;
+                        });
+                        APIs.updateProfilePicture(File(_image!));
+
+                        /// for hiding bottom sheet
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Image.asset(AppImages.camera),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: mq.height * 0.02,
+              ),
+            ],
+          );
+        });
   }
 }

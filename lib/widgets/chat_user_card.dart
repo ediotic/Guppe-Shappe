@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 import '../models/chat_user_model.dart';
+import '../screens/chat_screen/chat_screen.dart';
 import '../utils/app_colors.dart';
 
 class ChatUserCard extends StatefulWidget {
@@ -25,7 +26,10 @@ class _ChatUserCardState extends State<ChatUserCard> {
       shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(0.00)),
       margin: EdgeInsets.symmetric(vertical:3 ),
        child: InkWell(
-        onTap: (){},
+        onTap: (){
+          Navigator.push(
+            context, MaterialPageRoute(builder: (_) => ChatScreen(user: widget.user)));
+        },
          child: ListTile(
            
           leading: CircleAvatar(
@@ -33,10 +37,10 @@ class _ChatUserCardState extends State<ChatUserCard> {
             child: Icon(CupertinoIcons.person),
           ),
           // leading: ClipRRect(
-          //   borderRadius: BorderRadius.circular(mq.height * .3),
+          //   borderRadius: BorderRadius.circular(mq.height * .03),
           //   child: CachedNetworkImage(
-          //     width: mq.width * 0.12,
-          //     height: mq.height * 0.15,
+          //     width: mq.width * 0.055,
+          //     height: mq.height * 0.055,
           //           imageUrl: widget.user.image,
           //           errorWidget: (context, url, error) =>  CircleAvatar(
           //     child: Icon(CupertinoIcons.person),

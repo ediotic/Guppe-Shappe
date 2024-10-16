@@ -31,6 +31,12 @@ dependencies:
   # image showing 
   cached_network_image: ^3.4.1
 
+  #for choosing images
+  image_picker: ^1.1.2
+
+  #for firebase storage
+  firebase_storage: ^12.3.3
+
 
 
 

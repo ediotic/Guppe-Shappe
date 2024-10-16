@@ -11,5 +11,6 @@ abstract class AppStrings {
    static const about = "About";
    static const logOut = "Logout";
    static const update= "Update";
+   static const chooseProfilePicture = "Choose Profile Picture";
 
 }

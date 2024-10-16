@@ -26,7 +26,7 @@ class _SpalshScreenState extends State<SpalshScreen> {
       ///exit full screen
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+          SystemUiOverlayStyle(systemNavigationBarColor:AppColors.appWhiteColor , statusBarColor: AppColors.appWhiteColor));
 
       /// user already login h
       if (APIs.auth.currentUser != null) {
